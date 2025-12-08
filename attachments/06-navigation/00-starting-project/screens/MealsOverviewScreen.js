@@ -1,10 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { MEALS } from '../data/dummy-data';
 
-function MealsOverviewScreen() {
+// MealsOverviewScreen is geregistreerd als een scherm en krijgt daarom automatisch een navigation en route property
+function MealsOverviewScreen({ route }) {
+  const catId = route.params.categoryId;
+
   return (
     <View style={styles.container}>
-      <Text>Meals Overview Screen</Text>
+      <Text>Meals Overview Screen - {catId}</Text>
     </View>
   );
 }
