@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import CategoriesScreen from './screens/CategoriesScreen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MealsOverviewScreen from './screens/MealsOverviewScreen';
 import MealDetailScreen from './screens/MealDetailScreen';
+import { Button } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +45,16 @@ export default function App() {
             //   };
             // }}
           />
-          <Stack.Screen name='MealDetail' component={MealDetailScreen} />
+          <Stack.Screen
+            name='MealDetail'
+            component={MealDetailScreen}
+            // Example of adding a button to the header, in this case right. This is only good if we don't need direct interaction with the component that is responsible for rendering the screen content!
+            // If we need direct communication we need to go to the screen component (in this case MealDetailsScreen) and set the options as we learned there
+            
+            // options={{headerRight: () => {
+            //   return <Button title='Tap me'/>
+            // }}}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>
