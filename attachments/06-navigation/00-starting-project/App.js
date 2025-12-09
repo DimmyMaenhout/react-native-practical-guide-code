@@ -8,6 +8,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import MealsOverviewScreen from './screens/MealsOverviewScreen';
 import MealDetailScreen from './screens/MealDetailScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
+import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -18,7 +19,11 @@ function DrawerNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: '#351401' },
         headerTintColor: 'white',
-        sceneContainerStyle: { backgroundColor: '#3f2f25' } // this is named different from the Stack.Navigator there it's called "contentStyle"
+        sceneContainerStyle: { backgroundColor: '#3f2f25' }, // this is named different from the Stack.Navigator there it's called "contentStyle"
+        drawerContentStyle: { backgroundColor: '#351401' },
+        drawerInactiveTintColor: 'white',
+        drawerActiveTintColor: '#351401',
+        drawerActiveBackgroundColor: '#e4baa1'
       }}
     >
       <Drawer.Screen
@@ -26,10 +31,20 @@ function DrawerNavigator() {
         component={CategoriesScreen}
         options={{
           title: 'All Categories',
-          headerTintColor: 'white'
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name='list' size={size} color={color} />
+          )
         }}
       />
-      <Drawer.Screen name='Favorites' component={FavoritesScreen} />
+      <Drawer.Screen
+        name='Favorites'
+        component={FavoritesScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name='star' size={size} color={color} />
+          )
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -80,7 +95,7 @@ export default function App() {
               // headerRight: () => {
               //   return <Button title='Tap me' />;
               // }
-              title: "About the Meal"
+              title: 'About the Meal'
             }}
           />
         </Stack.Navigator>
