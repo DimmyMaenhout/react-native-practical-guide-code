@@ -7,34 +7,22 @@ import { NavigationContainer } from '@react-navigation/native';
 import AllExpenses from './screens/AllExpenses';
 import RecentExpenses from './screens/RecentExpenses';
 import ManageExpenses from './screens/ManageExpense';
+import { GlobalStyles } from './constants/styles';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
-
-function StackNavigator() {
-  <Stack.Navigator>
-    <Stack.Screen
-      name='recentExpenses'
-      component={RecentExpenses}
-      options={{
-        headerRight: () => {
-          <Ionicons name='add' color='white' size={24} />;
-        }
-      }}
-    />
-  </Stack.Navigator>;
-}
 
 function ExpensesOverview() {
   return (
     <BottomTab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#EBBD1E',
-        tabBarStyle: {
-          backgroundColor: '#1434A4'
+        headerTintColor: 'white',
+        headerStyle: {
+          backgroundColor: GlobalStyles.colors.primary500
         },
-        headerRight: () => {
-          <Ionicons name='add' color='white' size={24} />;
+        tabBarActiveTintColor: GlobalStyles.colors.accent500,
+        tabBarStyle: {
+          backgroundColor: GlobalStyles.colors.primary500
         }
       }}
     >
@@ -42,20 +30,22 @@ function ExpensesOverview() {
         name='RecentExpenses'
         component={RecentExpenses}
         options={{
+          title: 'Recent Expenses',
+          tabBarLabel: 'Recent',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='hourglass-outline' color={color} size={size} />
-          ),
-          title: 'Recent Expenses'
+          )
         }}
       />
       <BottomTab.Screen
         name='AllExpenses'
         component={AllExpenses}
         options={{
+          title: 'All Expenses',
+          tabBarLabel: 'All Expenses',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name='calendar' color={color} size={24} />
-          ),
-          title: 'All Expenses'
+            <Ionicons name='calendar' color={color} size={size} />
+          )
         }}
       />
     </BottomTab.Navigator>
@@ -69,19 +59,11 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            // name='recentExpenses'
-            // component={RecentExpenses}
-            // options={{
-            //   headerTintColor: 'white',
-            //   headerStyle: {
-            //     backgroundColor: '#1434A4'
-            //   },
-            //   headerRight: () => {
-            //     <Ionicons name='add' color='white' size={24} />;
-            //   }
-            // }}
             name='ExpensesOverview'
             component={ExpensesOverview}
+            options={{
+              headerShown: false
+            }}
           />
           <Stack.Screen name='MangeExpenses' component={ManageExpenses} />
         </Stack.Navigator>
