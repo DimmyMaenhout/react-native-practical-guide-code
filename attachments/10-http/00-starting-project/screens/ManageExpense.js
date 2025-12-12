@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect } from 'react';
+import { useContext, useLayoutEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
@@ -6,8 +6,11 @@ import Button from '../components/UI/Button';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import { ExpensesContext } from '../store/expenses-context';
+import { deleteExpense, storeExpense, updateExpense } from '../util/http';
+import LoadingOverlay from '../components/UI/LoadingOverlay';
 
 function ManageExpense({ route, navigation }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const expensesCtx = useContext(ExpensesContext);
 
   const editedExpenseId = route.params?.expenseId;
@@ -19,12 +22,16 @@ function ManageExpense({ route, navigation }) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: isEditing ? 'Edit Expense' : 'Add Expense',
+      title: isEditing ? 'Edit Expense' : 'Add Expense'
     });
   }, [navigation, isEditing]);
 
-  function deleteExpenseHandler() {
+  async function deleteExpenseHandler() {
+    setIsSubmitting(true);
+    await deleteExpense(editedExpenseId);
+    // setIsSubmitting(false); // not needed because we close the modal when done
     expensesCtx.deleteExpense(editedExpenseId);
+
     navigation.goBack();
   }
 
@@ -32,13 +39,23 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler(expenseData) {
+  async function confirmHandler(expenseData) {
+    setIsSubmitting(true);
     if (isEditing) {
       expensesCtx.updateExpense(editedExpenseId, expenseData);
+
+      await updateExpense(expenseId, expenseData);
     } else {
-      expensesCtx.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expensesCtx.addExpense({ ...expenseData, id: id });
     }
+    // setIsSubmitting(false); // not needed because we close the modal when done
+
     navigation.goBack();
+  }
+
+  if (isSubmitting) {
+    return <LoadingOverlay />;
   }
 
   return (
@@ -52,7 +69,7 @@ function ManageExpense({ route, navigation }) {
       {isEditing && (
         <View style={styles.deleteContainer}>
           <IconButton
-            icon="trash"
+            icon='trash'
             color={GlobalStyles.colors.error500}
             size={36}
             onPress={deleteExpenseHandler}
@@ -69,13 +86,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: GlobalStyles.colors.primary800,
+    backgroundColor: GlobalStyles.colors.primary800
   },
   deleteContainer: {
     marginTop: 16,
     paddingTop: 8,
     borderTopWidth: 2,
     borderTopColor: GlobalStyles.colors.primary200,
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 });
