@@ -9,6 +9,8 @@ import { Colors } from './constants/styles';
 import AuthContextProvider, { AuthContext } from './store/auth-context';
 import { useContext } from 'react';
 
+import IconButton from './components/ui/IconButton';
+
 const Stack = createNativeStackNavigator();
 
 function AuthStack() {
@@ -27,6 +29,7 @@ function AuthStack() {
 }
 // We can add route protection by simply putting this screen into its own screen setup and only rendering this navigator if a certain condition is met
 function AuthenticatedStack() {
+  const authContext = useContext(AuthContext);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -35,7 +38,20 @@ function AuthenticatedStack() {
         contentStyle: { backgroundColor: Colors.primary100 }
       }}
     >
-      <Stack.Screen name='Welcome' component={WelcomeScreen} />
+      <Stack.Screen
+        name='Welcome'
+        component={WelcomeScreen}
+        options={{
+          headerRight: ({ tintColor }) => (
+            <IconButton
+              icon='exit'
+              color={tintColor}
+              size={24}
+              onPress={authContext.logout}
+            />
+          )
+        }}
+      />
     </Stack.Navigator>
   );
 }
