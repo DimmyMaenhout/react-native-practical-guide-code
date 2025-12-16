@@ -6,6 +6,8 @@ import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import { Colors } from './constants/styles';
+import AuthContextProvider, { AuthContext } from './store/auth-context';
+import { useContext } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,33 +17,42 @@ function AuthStack() {
       screenOptions={{
         headerStyle: { backgroundColor: Colors.primary500 },
         headerTintColor: 'white',
-        contentStyle: { backgroundColor: Colors.primary100 },
+        contentStyle: { backgroundColor: Colors.primary100 }
       }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name='Login' component={LoginScreen} />
+      <Stack.Screen name='Signup' component={SignupScreen} />
     </Stack.Navigator>
   );
 }
-
+// We can add route protection by simply putting this screen into its own screen setup and only rendering this navigator if a certain condition is met
 function AuthenticatedStack() {
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: Colors.primary500 },
         headerTintColor: 'white',
-        contentStyle: { backgroundColor: Colors.primary100 },
+        contentStyle: { backgroundColor: Colors.primary100 }
       }}
     >
-      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name='Welcome' component={WelcomeScreen} />
     </Stack.Navigator>
   );
 }
 
 function Navigation() {
+  const authContext = useContext(AuthContext);
+
+  let content = <AuthStack />;
+
+  if (authContext.isAuthenticated) {
+    content = <AuthenticatedStack />;
+  }
+
   return (
     <NavigationContainer>
-      <AuthStack />
+      {/* <AuthStack /> */}
+      {content}
     </NavigationContainer>
   );
 }
@@ -49,9 +60,10 @@ function Navigation() {
 export default function App() {
   return (
     <>
-      <StatusBar style="light" />
-
-      <Navigation />
+      <StatusBar style='light' />
+      <AuthContextProvider>
+        <Navigation />
+      </AuthContextProvider>
     </>
   );
 }
