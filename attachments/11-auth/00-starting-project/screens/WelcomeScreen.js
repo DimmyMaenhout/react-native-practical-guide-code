@@ -1,10 +1,30 @@
 import { StyleSheet, Text, View } from 'react-native';
+import axios from 'axios';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../store/auth-context';
 
 function WelcomeScreen() {
+  const [fetchedMessage, setFetchedMessage] = useState('');
+
+  const authContext = useContext(AuthContext);
+  const token = authContext.token;
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://react-native-course-e6af0-default-rtdb.europe-west1.firebasedatabase.app/message.json?auth=${token}`
+      )
+      .then((response) => {
+        console.log(response.data);
+        setFetchedMessage(response.data);
+      });
+  }, [token]);
+
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.title}>Welcome!</Text>
       <Text>You authenticated successfully!</Text>
+      <Text>{fetchedMessage}</Text>
     </View>
   );
 }
@@ -16,11 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: 32
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 8,
-  },
+    marginBottom: 8
+  }
 });

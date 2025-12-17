@@ -7,9 +7,11 @@ import SignupScreen from './screens/SignupScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import { Colors } from './constants/styles';
 import AuthContextProvider, { AuthContext } from './store/auth-context';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import IconButton from './components/ui/IconButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppLoading from 'expo-app-loading';
 
 const Stack = createNativeStackNavigator();
 
@@ -73,12 +75,40 @@ function Navigation() {
   );
 }
 
+// We added this use component so we can update our AuthContext when we have fetched the token, we then return the <Navigation /> component and use the <Root /> component in the App function instead of the <Navigation />
+// The adventage off this approach is that we can now use the AppLoading component to prolong the loading screen until we're done fetching this token, to do this we need to install the package expo-app-loading (expo install expo-app-loading)
+function Root() {
+  const [isTryingLogin, setIsTryingLogin] = useState(true);
+  const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    async function fetchToken() {
+      const storedToken = await AsyncStorage.getItem('token');
+
+      if (storedToken) {
+        authContext.authenticate(storedToken);
+      }
+
+      setIsTryingLogin(false);
+    }
+
+    fetchToken();
+  }, []);
+
+  if (isTryingLogin) {
+    // this (AppLoading) will make sure that the splashscreen is prolonged
+    return <AppLoading />;
+  }
+
+  return <Navigation />;
+}
+
 export default function App() {
   return (
     <>
       <StatusBar style='light' />
       <AuthContextProvider>
-        <Navigation />
+        <Root />
       </AuthContextProvider>
     </>
   );
